@@ -1,0 +1,46 @@
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+from collections import Counter
+import ast
+
+# Extracting keywords from the 'Shared_Themes' column
+# The themes are stored as string representations of lists, so they need to be converted to actual lists
+themes = data['Shared_Themes'].dropna().apply(ast.literal_eval).sum()
+
+# Count the frequency of each theme
+theme_counts = Counter(themes)
+
+# Create a word cloud
+wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(theme_counts)
+
+# Plotting the word cloud
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis('off')
+plt.show()
+
+
+# Combining similar terms such as 'refugees' and 'refugee'
+# This requires replacing these terms with a single, unified term in the list of themes
+
+# Function to unify similar terms
+def unify_terms(theme):
+    replacements = {
+        'refugees': 'refugee',
+    }
+    return replacements.get(theme, theme)
+
+# Applying the unification function to each theme in the list
+unified_themes = [unify_terms(theme) for theme in combined_themes]
+
+# Recount the frequency of each unified theme
+unified_theme_counts = Counter(unified_themes)
+
+# Create a word cloud with the final color scheme and unified terms
+wordcloud_unified = WordCloud(width=800, height=400, background_color='black', color_func=final_custom_color_func).generate_from_frequencies(unified_theme_counts)
+
+# Plotting the word cloud
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud_unified, interpolation='bilinear')
+plt.axis('off')
+plt.show()
